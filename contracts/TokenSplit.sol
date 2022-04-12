@@ -87,21 +87,12 @@ contract TokenSplit {
         
         require(_tokenBalances[_contractAddress][_tokenAddress] >= _amount, "insufficient amount to split");
 
-        if (_tokenAddress == _etherAddress) {
-
-            for (uint256 index = 0; index < _recipients.length; index++) {
-
-                (bool sent, ) = payable(_recipients[index]._recipient).call{value: _recipients[index]._shareValue / 100}("");
-                require(sent, "Failed to release Ether");
-
-            }
-        }
-
-        IERC20 _tokenToSplitFrom = IERC20(_tokenAddress);
-
         for (uint256 index = 0; index < _recipients.length; index++) {
 
-            _tokenToSplitFrom.transfer(_recipients[index]._recipient, _amount * (_recipients[index]._shareValue / 100));
+            uint256 _amountToSplitToAddress = _recipients[index]._shareValue / 100;
+            _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
+            _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
+            
 
         }
 
