@@ -40,7 +40,7 @@ contract TokenSplit {
     address private _etherAddress;
 
 
-    /// @dev ToeknRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
+    /// @dev TokenRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
 
     struct TokenRecipient {
 
@@ -97,6 +97,24 @@ contract TokenSplit {
             
 
         }
+
+    }
+
+    function withDraw(uint256 _amount, address _tokenAddress) external {
+
+        require(_tokenBalances[msg.sender][_tokenAddress] >= _amount, "insufficient balance");
+
+        if (_tokenAddress == _etherAddress) {
+
+            (bool sent, ) = payable(msg.sender).call{value: _amount}("");
+            require(sent, "Failed to release Ether");
+            _tokenBalances[msg.sender][_tokenAddress] -= _amount;
+
+        }
+
+        IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
+        _tokenToWithdrawFrom.transfer(msg.sender, _amount);
+        _tokenBalances[msg.sender][_tokenAddress] -= _amount;
 
     }
 
