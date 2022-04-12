@@ -12,7 +12,7 @@ pragma solidity 0.8.13;
 
 import "./utils/IERC20.sol";
 
-contract TokenSplit {
+contract Payment {
 
 
 
