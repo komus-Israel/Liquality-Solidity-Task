@@ -41,7 +41,11 @@ contract TokenSplit {
     }
 
 
-    function depositToken(address _token) external onlySplitter {
+    function depositToken(address _token, uint256 _amount) external onlySplitter {
+
+        IERC20 _tokenToDeposit = IERC20(_token);
+        _tokenToDeposit.transferFrom(msg.sender, address(this), _amount);
+        _tokenBalances[address(this)[_token]] += _amount;
 
     }
 
