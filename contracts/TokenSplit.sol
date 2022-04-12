@@ -12,20 +12,40 @@ import "./utils/IERC20.sol";
 
 contract TokenSplit {
 
-    /// @dev mapping to store shares allocated to addresses
+    /// @dev mapping to store token shares allocated to an address
 
-    mapping(address => uint256) private _shares;   
+    mapping(address => mapping(address => uint256)) private _shares;   
 
 
     /// @dev mapping the store the ether and erc20 token balances      
 
     mapping(address => mapping(address => uint256)) private _tokenBalances;
 
-    function depositToken(address _token) external {
+    /// @dev  declare the address of the splitter
+
+    address private splitter;
+
+
+    modifier onlySplitter() {
+
+        require(msg.sender == splitter, "invalid sender");
+        _;
 
     }
 
-    function depositEther() external {
+
+    constructor (address _splitter) {
+
+        splitter = _splitter;
+
+    }
+
+
+    function depositToken(address _token) external onlySplitter {
+
+    }
+
+    function depositEther() external onlySplitter {
 
     }
 
