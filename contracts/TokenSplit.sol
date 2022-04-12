@@ -40,6 +40,11 @@ contract TokenSplit {
     address private _etherAddress;
 
 
+    /// @dev  declare the variable to be used in reentrancy modifier
+
+    bool private _locked;
+
+
     /// @dev TokenRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
 
     struct TokenRecipient {
@@ -55,6 +60,19 @@ contract TokenSplit {
         require(msg.sender == splitter, "invalid sender");
         _;
 
+    }
+
+
+    /// @notice locked = true
+    /// @dev    when an attacker calls the withdraw or refund function, the function is set to locked. It will only be unlocked when the function runs to the end
+    /// @dev    locked = false after the withdraw or refund function finishes executing
+
+    modifier noReEntrancy() {
+
+        require(!_locked, "no re-entrancy");
+        _locked = true;
+        _;
+        _locked = false;
     }
 
 
