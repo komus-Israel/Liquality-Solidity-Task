@@ -118,7 +118,7 @@ contract TokenSplit {
 
     }
 
-    function withDraw(uint256 _amount, address _tokenAddress) external {
+    function withDraw(uint256 _amount, address _tokenAddress) external noReEntrancy{
 
         require(_tokenBalances[msg.sender][_tokenAddress] >= _amount, "insufficient balance");
 
