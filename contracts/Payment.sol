@@ -208,7 +208,7 @@ contract Payment {
         uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
         require(_stream._totalAmount >= _amountToWithDraw, "insufficient balance");
 
-        if(_stream.tokenAddress == _etherAddress) {
+        if(_stream._tokenAddress == _etherAddress) {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
             require(sent, "Failed to release Ether");
