@@ -52,9 +52,9 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
         */
 
         beforeEach(async()=>{
-            await usdt.approve(paymentContract.address, tokens(10))
+            await usdt.approve(paymentContract.address, tokens(30))
             etherDeposit = await paymentContract.depositEther({from:splitter, value: ether(20)})
-            usdtDeposit = await paymentContract.depositToken(usdt.address, tokens(10))
+            usdtDeposit = await paymentContract.depositToken(usdt.address, tokens(30))
         })
 
         describe("successful deposits", ()=>{
@@ -107,14 +107,40 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
             describe("ether splitting", ()=>{
 
                 beforeEach(async()=>{
+
                     await paymentContract.splitToken(ETHER_ADDRESS, recipients, ether(20))
                 })
 
                 describe("sucessful splitting", async()=>{
 
                     it("increments the recipient's allocated balance from 0", async()=>{
+
                         const recipientBalanceInContract = await paymentContract.getBalance(recipient1, ETHER_ADDRESS)
                         recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated ether balance has been incremented from 0")
+                        recipientBalanceInContract.toString().should.be.equal((ether(20) * 0.1).toString(), "recipient got 10% as his first allocated ether")
+                   
+                    })
+
+                })
+
+            })
+
+            describe("erc20 token splitting", ()=>{
+
+                beforeEach(async()=>{
+
+                    await paymentContract.splitToken(usdt.address, recipients, tokens(20))
+
+                })
+
+                describe("successful splitting", ()=>{
+
+                     it("increments the recipient's allocated balance from 0", async()=>{
+
+                        const recipientBalanceInContract = await paymentContract.getBalance(recipient1, usdt.address)
+                        recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated token balance has been incremented from 0")
+                        recipientBalanceInContract.toString().should.be.equal((ether(20) * 0.1).toString(), "recipient got 10% as his first allocated token")
+                   
                     })
 
                 })
