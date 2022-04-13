@@ -53,7 +53,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
         beforeEach(async()=>{
             await usdt.approve(paymentContract.address, tokens(10))
-            etherDeposit = await paymentContract.depositEther({from:splitter, value: ether(0.2)})
+            etherDeposit = await paymentContract.depositEther({from:splitter, value: ether(20)})
             usdtDeposit = await paymentContract.depositToken(usdt.address, tokens(10))
         })
 
@@ -73,10 +73,12 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
                 contractEtherBalance.toString().should.not.be.equal("0", "ether balance of the payment is not equal to zero")
                 contractTokenBalance.toString().should.not.be.equal("0", "token balance of the payment is not equal to zero")
 
+
             })
 
 
             it("should not have zero deposits", async()=>{
+
                 const contractDepositedTokenBalance = await paymentContract.getBalance(paymentContract.address, ETHER_ADDRESS)
                 const contractDepositedEtherBalance = await paymentContract.getBalance(paymentContract.address, usdt.address)
 
@@ -85,6 +87,40 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
             })
             
+        })
+
+        describe("splitting", ()=>{
+
+
+        /*
+         * recipients array is represents the array of recipeients with their share allocation percentage   
+        */
+
+        let recipients = [
+
+            {_recipient: recipient1, _shareValue: 10},
+            {_recipient: recipient2, _shareValue: 10},
+            {_recipient: recipient3, _shareValue: 10}
+
+        ]
+
+            describe("ether splitting", ()=>{
+
+                beforeEach(async()=>{
+                    await paymentContract.splitToken(ETHER_ADDRESS, recipients)
+                })
+
+                describe("sucessful splitting", async()=>{
+
+                    it("increments the recipient's allocated balance from 0", async()=>{
+                        const recipientBalanceInContract = await paymentContract.getBalance(recipient1, ETHER_ADDRESS)
+                        recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated ether balance has been incremented from 0")
+                    })
+
+                })
+
+            })
+
         })
 
     })
