@@ -82,6 +82,7 @@ contract Payment {
         IERC20 _tokenToDeposit = IERC20(_tokenAddress);
         _tokenToDeposit.transferFrom(msg.sender, _contractAddress, _amount);
         _tokenBalances[_contractAddress][_tokenAddress] += _amount;
+        emit Deposit(msg.sender, _tokenAddress, _amount);
 
     }
 
@@ -91,7 +92,7 @@ contract Payment {
     function depositEther() external payable onlySplitter {
 
         _tokenBalances[_contractAddress][_etherAddress] += msg.value;
-
+        emit Deposit(msg.sender, _etherAddress, msg.value);
     }
 
 
@@ -110,7 +111,7 @@ contract Payment {
             uint256 _amountToSplitToAddress = _recipients[index]._shareValue / 100;
             _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
             _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
-            
+            emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
 
         }
 
@@ -131,13 +132,14 @@ contract Payment {
             (bool sent, ) = payable(msg.sender).call{value: _amount}("");
             require(sent, "Failed to release Ether");
             _tokenBalances[msg.sender][_tokenAddress] -= _amount;
+            emit Withdrawal(msg.sender, _tokenAddress, _amount);
 
         }
 
         IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
         _tokenToWithdrawFrom.transfer(msg.sender, _amount);
         _tokenBalances[msg.sender][_tokenAddress] -= _amount;
-
+        emit Withdrawal(msg.sender, _tokenAddress, _amount);
     }
 
 
