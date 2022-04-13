@@ -1,5 +1,7 @@
 pragma solidity >=0.4.22 <0.9.0;
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
+
+/// @title  A simple ERC20 contract setup for the Payment contract
 
 contract ERC20{
     
