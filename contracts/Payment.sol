@@ -24,6 +24,7 @@ contract Payment {
     /// @dev mapping the store the ether and erc20 token balances      
 
     mapping(address => mapping(address => uint256)) private _tokenBalances;
+    mapping(uint256 => Stream) private _streams;
 
 
 
@@ -31,7 +32,7 @@ contract Payment {
     address private _contractAddress;                   //  declare the address of the contract
     address private _etherAddress;                      //  declare the address of ether
     bool private _locked;                               //  declare the variable to be used in reentrancy modifier
-
+    uint256 private _streamId;                          //  ID to keep track of every allocated stream
 
     /// @dev TokenRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
 
@@ -39,6 +40,18 @@ contract Payment {
 
         address _recipient;
         uint256 _shareValue;
+
+    }
+
+    struct Stream {
+
+        uint256 _id;
+        uint256 _duration;
+        uint256 _totalAmount;
+        uint256 _amountPerSeconds;
+        address _recipient;
+        address _tokenAddress;
+
 
     }
 
@@ -153,6 +166,36 @@ contract Payment {
 
     function getBalance(address _holder, address _tokenAddress) external view returns (uint256) {
         return _tokenBalances[_holder][_tokenAddress];
+    }
+
+
+    function splitWithStream (address _tokenAddress, TokenRecipient[] calldata _recipients, uint256 _amount) {
+
+        /**
+                *struct Stream {
+
+                uint256 _id;
+                uint256 _duration;
+                uint256 _totalAmount;
+                uint256 _amountPerSeconds;
+                address _recipient;
+                address _tokenAddress;
+
+
+            }
+         */
+        
+        require(_tokenBalances[_contractAddress][_tokenAddress] >= _amount, "insufficient amount to split");
+
+        for (uint256 index = 0; index < _recipients.length; index++) {
+
+            uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
+            _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
+            _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
+            emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
+
+        }
+
     }
 
     
