@@ -140,6 +140,11 @@ contract Payment {
 
     }
 
+
+    event Deposit (address indexed depositor, address indexed tokenAddress, uint256 amount);
+    event Withdrawal (address indexed withdrawee, address indexed tokenAddress, uint256 amount);
+    event Splitted  (address indexed to, address indexed tokenAddress, uint256 amount); 
+
     
 
 }
