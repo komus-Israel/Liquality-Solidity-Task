@@ -193,7 +193,8 @@ contract Payment {
                                     _amountToWithDrawPerSeconds, 
                                     _recipients[index]._recipient,
                                     _tokenAddress
-                                )
+                                );
+
             emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
 
         }
@@ -214,6 +215,7 @@ contract Payment {
 
         }   else {
 
+            IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
 
         }
