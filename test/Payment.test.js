@@ -103,7 +103,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
             let recipients 
 
             beforeEach(async()=>{
-                
+
                 reEntrancyAddress =  reEntrancy.address
 
                 recipients = [
@@ -135,28 +135,40 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
                 })
 
-                describe("reEntrancy attack after splitting", ()=>{
+                describe("failed reEntrancy attack after splitting", ()=>{
+
+                    it("fails to execute reentrancy", async()=>{
+                        await reEntrancy.attack().should.be.rejected
+                    })
+
                     
+                })
+
+                describe("ether withdrawal", ()=>{
+
+                    let withdrawal
+                    let balanceBeforeWithdrawal
+    
                     beforeEach(async()=>{
-
-                        await reEntrancy.attack()
-
+                        balanceBeforeWithdrawal = await web3.eth.getBalance(recipient1)
+                        withdrawal = await paymentContract.withDraw(ether(0.2), ETHER_ADDRESS, {from: recipient1})
+                    })
+    
+                    it("should emit the withdrawal event", async()=>{
+                        withdrawal.logs[0].event.should.be.equal("Withdrawal", "it emitted the withdraw event")
                     })
 
-                    describe("attack execution", ()=>{
-
-                        it("updates balance", async()=>{
-                            const balance = await web3.eth.getBalance(reEntrancy.address)
-                            console.log(balance)
-                        })
-
+                    it("should withdraw the ether into the recipient's address", async()=>{
+                        const balanceAfterWithdrawal = await web3.eth.getBalance(recipient1)
+                        const incremented = balanceAfterWithdrawal > balanceBeforeWithdrawal
+                        incremented.should.be.equal(true, "ether balance of recipient was incremented after withdrawal")
                     })
-
+    
                 })
 
             })
 
-            /*describe("erc20 token splitting", ()=>{
+            describe("erc20 token splitting", ()=>{
 
                 beforeEach(async()=>{
 
@@ -176,14 +188,41 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
                 })
 
-            })*/
+                describe("erc20 token withdrawal", ()=>{
+
+                    let withdrawal
+                    let balanceBeforeWithdrawal
+
+                    beforeEach(async()=>{
+
+                        balanceBeforeWithdrawal = await usdt.balanceOf(recipient1)
+                        withdrawal = await paymentContract.withDraw(tokens(2), usdt.address)
+                    })
+
+                    it("emits the withdrawal event", ()=>{
+
+                        withdrawal.logs[0].event.should.be.equal("Withdrawal", "it emitted the withdrawal event")
+        
+                    })
+
+                    it("emits the address of the token withdrawn", ()=>{
+                        withdrawal.logs[0].args.tokenAddress.should.be.equal(usdt.address, "it emits the address of the token withdrawn")
+                    })
+
+                    it("withdraws the token in the recipient's address", async()=>{
+                        const balanceAfterWithdrawal = await usdt.balanceOf(recipient1)
+                        const incremented = balanceAfterWithdrawal > balanceBeforeWithdrawal
+
+                        incremented.should.be.equal(true, "the token balance of the recipient increased after withdrawal")
+                    })
+                })
+
+            })
 
            
-
+            
         }) 
 
     })
-
-
-    
+   
 })

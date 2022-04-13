@@ -12,13 +12,14 @@ contract ReEntrancy {
 
     constructor(address _paymentContractAddress) {
 
-        _payment = Payment(payable(_paymentContractAddress));
+        _payment = Payment(_paymentContractAddress);
     }
 
     //  contract recieving ether should have a fallback or receive function but payable
    
+   
 
-    fallback() external payable {
+    fallback() external payable{
 
         // attack implementation
 

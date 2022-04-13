@@ -16,7 +16,7 @@ contract Payment {
 
 
 
-    fallback () external payable {
+    fallback () external  {
 
     }
 
@@ -123,7 +123,7 @@ contract Payment {
     /// @param _amount is that amount of tokens (ERC20 or ETHER) to be withdrawn by the recipient
     /// @param _tokenAddress is the address of the token (ERC20 or ETHER) where the token will be withdrawn from
 
-    function withDraw(uint256 _amount, address _tokenAddress) external  {
+    function withDraw(uint256 _amount, address _tokenAddress) external noReEntrancy {
 
         require(_tokenBalances[msg.sender][_tokenAddress] >= _amount, "insufficient balance");
 
@@ -134,12 +134,17 @@ contract Payment {
             _tokenBalances[msg.sender][_tokenAddress] -= _amount;
             emit Withdrawal(msg.sender, _tokenAddress, _amount);
 
+        } else {
+            IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
+            _tokenToWithdrawFrom.transfer(msg.sender, _amount);
+            _tokenBalances[msg.sender][_tokenAddress] -= _amount;
+            emit Withdrawal(msg.sender, _tokenAddress, _amount);
         }
 
-        IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
-        _tokenToWithdrawFrom.transfer(msg.sender, _amount);
-        _tokenBalances[msg.sender][_tokenAddress] -= _amount;
-        emit Withdrawal(msg.sender, _tokenAddress, _amount);
+
+       
+
+        
     }
 
     /// @param  _holder is the address of the an holder whose balance is to be checked
