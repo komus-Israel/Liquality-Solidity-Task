@@ -215,7 +215,7 @@ contract Payment {
 
         }   else {
 
-            IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
+            IERC20 _tokenToWithdrawFrom = IERC20(_stream._tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
 
         }
