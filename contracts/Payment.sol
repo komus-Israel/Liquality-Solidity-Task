@@ -147,7 +147,7 @@ contract Payment {
     /// @return the token balance of the holder
 
     function getBalance(address _holder, address _tokenAddress) external view returns (uint256) {
-        return _tokenBalances[_tokenAddress][_holder];
+        return _tokenBalances[_holder][_tokenAddress];
     }
 
 
