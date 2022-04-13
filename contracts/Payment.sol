@@ -108,7 +108,7 @@ contract Payment {
 
         for (uint256 index = 0; index < _recipients.length; index++) {
 
-            uint256 _amountToSplitToAddress = _recipients[index]._shareValue / 100;
+            uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
             _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
             _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
             emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
@@ -149,6 +149,8 @@ contract Payment {
     function getBalance(address _holder, address _tokenAddress) external view returns (uint256) {
         return _tokenBalances[_holder][_tokenAddress];
     }
+
+    
 
 
     event Deposit (address indexed depositor, address indexed tokenAddress, uint256 amount);

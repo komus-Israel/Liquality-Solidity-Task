@@ -42,7 +42,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
     describe("deposit, splitting and withdrawal", ()=>{
 
         let etherDeposit
-        let usdtDeposit
+        let usdtDeposit 
 
 
         /*
@@ -89,14 +89,14 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
             
         })
 
-        describe("splitting", ()=>{
+        describe("splitting", ()=>{ 
 
 
         /*
          * recipients array is represents the array of recipeients with their share allocation percentage   
         */
 
-        let recipients = [
+       let recipients = [
 
             {_recipient: recipient1, _shareValue: 10},
             {_recipient: recipient2, _shareValue: 10},
@@ -121,8 +121,10 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
             })
 
-        })
+        }) 
 
     })
 
+
+    
 })
