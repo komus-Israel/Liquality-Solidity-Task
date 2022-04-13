@@ -196,7 +196,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
                     beforeEach(async()=>{
 
                         balanceBeforeWithdrawal = await usdt.balanceOf(recipient1)
-                        withdrawal = await paymentContract.withDraw(tokens(2), usdt.address)
+                        withdrawal = await paymentContract.withDraw(tokens(2), usdt.address, {from: recipient1})
                     })
 
                     it("emits the withdrawal event", ()=>{
