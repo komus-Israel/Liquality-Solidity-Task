@@ -2,7 +2,7 @@ require("chai")
     .use(require("chai-as-promised"))
     .should()
 
-const { ETHER_ADDRESS, tokens, ether } = require("./helper")
+const { ETHER_ADDRESS, tokens, ether, wait } = require("./helper")
 
 const PaymentContract = artifacts.require("./Payment")
 const ERC20_USDT    = artifacts.require("./ERC20")
@@ -135,7 +135,16 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                 describe("streamed withdrawal", ()=>{
 
                     beforeEach(async()=>{
-                        await paymentContract.
+                        await paymentContract.withdrawFromStream(1, {from: recipient1})
+                    })
+
+                    describe("balance increment", ()=>{
+
+                        it("returns balance", async()=>{
+                            const balance = await web3.eth.getBalance(recipient1)
+                            console.log(balance.toString())
+                        })
+
                     })
 
                 })

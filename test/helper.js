@@ -9,9 +9,14 @@ const tokens=(n)=>{
 
 const ether = (n) => tokens(n)
 
+const wait=(seconds)=>{
+    const milliseconds= seconds * 1000
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 
 
 
-module.exports = { ETHER_ADDRESS, tokens, ether }
+
+module.exports = { ETHER_ADDRESS, tokens, ether, wait}
 
