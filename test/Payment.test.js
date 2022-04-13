@@ -66,11 +66,22 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
             })
         
             it("should not have 0 as the contract's ether and token balance", async()=>{
+                
                 const contractTokenBalance = await usdt.balanceOf(paymentContract.address)
                 const contractEtherBalance = await web3.eth.getBalance(paymentContract.address)
 
                 contractEtherBalance.toString().should.not.be.equal("0", "ether balance of the payment is not equal to zero")
                 contractTokenBalance.toString().should.not.be.equal("0", "token balance of the payment is not equal to zero")
+
+            })
+
+
+            it("should not have zero deposits", async()=>{
+                const contractDepositedTokenBalance = await paymentContract.getBalance(paymentContract.address, ETHER_ADDRESS)
+                const contractDepositedEtherBalance = await paymentContract.getBalance(paymentContract.address, usdt.address)
+
+                contractDepositedEtherBalance.toString().should.not.be.equal("0", "deposited ether balance of the contract is not zero")
+                contractDepositedTokenBalance.toString().should.not.be.equal("0", "deposited token balance of the contract is not zero")
 
             })
             

@@ -142,6 +142,9 @@ contract Payment {
         emit Withdrawal(msg.sender, _tokenAddress, _amount);
     }
 
+    /// @param  _holder is the address of the an holder whose balance is to be checked
+    /// @param  _tokenAddress is token address of the token balance to be checked
+    /// @return the token balance of the holder
 
     function getBalance(address _holder, address _tokenAddress) external view returns (uint256) {
         return _tokenBalances[_tokenAddress][_holder];
