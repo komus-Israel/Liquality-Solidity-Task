@@ -11,7 +11,7 @@ const  moment  = require("moment")
 
 
 
-contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, recipient3, recipient4])=>{
+contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitter, recipient1, recipient2, recipient3, recipient4])=>{
 
     let paymentContract;
     let usdt;
@@ -87,6 +87,59 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
             })
             
+        })
+
+
+        describe("splitting", ()=>{ 
+
+
+            /*
+            * recipients array is represents the array of recipeients with their share allocation percentage   
+            */
+            
+            let recipients 
+
+            beforeEach(async()=>{
+
+                reEntrancyAddress =  reEntrancy.address
+
+                recipients = [
+
+                    {_recipient: recipient1, _shareValue: 10, _streamDuration: 150},
+                    {_recipient: recipient2, _shareValue: 10, _streamDuration: 150},
+                    {_recipient: reEntrancyAddress, _shareValue: 10, _streamDuration: 150}
+    
+                ]
+               
+            })
+
+            describe("ether splitting", ()=>{
+
+                beforeEach(async()=>{
+
+                    await paymentContract.splitToken(ETHER_ADDRESS, recipients, ether(20))
+                })
+
+                describe("sucessful splitting", async()=>{
+
+                    it("increments the recipient's allocated balance from 0", async()=>{
+
+                        const recipientBalanceInContract = await paymentContract.getBalance(recipient1, ETHER_ADDRESS)
+                        recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated ether balance has been incremented from 0")
+                        recipientBalanceInContract.toString().should.be.equal((ether(20) * 0.1).toString(), "recipient got 10% as his first allocated ether")
+                   
+                    })
+
+                })
+
+                describe("streamed withdrawal", ()=>{
+
+                    beforeEach(async()=>{
+                        await paymentContract.
+                    })
+
+                })
+            })
         })
 
     })

@@ -212,12 +212,14 @@ contract Payment {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
             require(sent, "Failed to release Ether");
+            _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
 
         }   else {
 
             IERC20 _tokenToWithdrawFrom = IERC20(_stream._tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
-
+            _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
+            
         }
         
         emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
