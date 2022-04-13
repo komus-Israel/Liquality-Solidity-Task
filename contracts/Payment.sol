@@ -64,9 +64,9 @@ contract Payment {
     }
 
 
-    constructor (address _splitter) {
+    constructor () {
 
-        splitter = _splitter;
+        splitter = msg.sender;
         _contractAddress = address(this);
         _etherAddress = address(0);
 
