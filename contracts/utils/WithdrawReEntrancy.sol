@@ -1,4 +1,6 @@
-pragma solidity 0.8.13;
+pragma solidity 0.8.10;
+
+//  SPDX-License-Identifier: UNLICENSED
 
 import "../Payment.sol";
 

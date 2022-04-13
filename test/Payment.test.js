@@ -6,6 +6,7 @@ const { ETHER_ADDRESS, tokens, ether } = require("./helper")
 
 const PaymentContract = artifacts.require("./Payment")
 const ERC20_USDT    = artifacts.require("./ERC20")
+const ReEntrancy = artifacts.require("./ReEntrancy")
 
 
 
@@ -14,14 +15,16 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
     let paymentContract;
     let usdt;
-    
+    let reEntrancy;
+    let reEntrancyAddress
+   
 
     beforeEach(async()=>{
 
         paymentContract = await PaymentContract.new()
         usdt = await ERC20_USDT.new("US Dollar Tether", "USDT")     //  represented the ERC20 token with USDT
-
-
+        reEntrancy = await ReEntrancy.new(paymentContract.address)  // reEntrancy contract to be used to launch attack on the payment contract
+        
     })
 
 
@@ -52,6 +55,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
         */
 
         beforeEach(async()=>{
+
             await usdt.approve(paymentContract.address, tokens(30))
             etherDeposit = await paymentContract.depositEther({from:splitter, value: ether(20)})
             usdtDeposit = await paymentContract.depositToken(usdt.address, tokens(30))
@@ -92,17 +96,25 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
         describe("splitting", ()=>{ 
 
 
-        /*
-         * recipients array is represents the array of recipeients with their share allocation percentage   
-        */
+            /*
+            * recipients array is represents the array of recipeients with their share allocation percentage   
+            */
+            
+            let recipients 
 
-       let recipients = [
+            beforeEach(async()=>{
+                
+                reEntrancyAddress =  reEntrancy.address
 
-            {_recipient: recipient1, _shareValue: 10},
-            {_recipient: recipient2, _shareValue: 10},
-            {_recipient: recipient3, _shareValue: 10}
+                recipients = [
 
-        ]
+                    {_recipient: recipient1, _shareValue: 10},
+                    {_recipient: recipient2, _shareValue: 10},
+                    {_recipient: reEntrancyAddress, _shareValue: 10}
+    
+                ]
+               
+            })
 
             describe("ether splitting", ()=>{
 
@@ -123,9 +135,28 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
                 })
 
+                describe("reEntrancy attack after splitting", ()=>{
+                    
+                    beforeEach(async()=>{
+
+                        await reEntrancy.attack()
+
+                    })
+
+                    describe("attack execution", ()=>{
+
+                        it("updates balance", async()=>{
+                            const balance = await web3.eth.getBalance(reEntrancy.address)
+                            console.log(balance)
+                        })
+
+                    })
+
+                })
+
             })
 
-            describe("erc20 token splitting", ()=>{
+            /*describe("erc20 token splitting", ()=>{
 
                 beforeEach(async()=>{
 
@@ -145,7 +176,9 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
 
                 })
 
-            })
+            })*/
+
+           
 
         }) 
 

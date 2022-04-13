@@ -1,4 +1,4 @@
-pragma solidity 0.8.13;
+pragma solidity 0.8.10;
 
 //  SPDX-License-Identifier: UNLICENSED
 
@@ -123,7 +123,7 @@ contract Payment {
     /// @param _amount is that amount of tokens (ERC20 or ETHER) to be withdrawn by the recipient
     /// @param _tokenAddress is the address of the token (ERC20 or ETHER) where the token will be withdrawn from
 
-    function withDraw(uint256 _amount, address _tokenAddress) external noReEntrancy {
+    function withDraw(uint256 _amount, address _tokenAddress) external  {
 
         require(_tokenBalances[msg.sender][_tokenAddress] >= _amount, "insufficient balance");
 
