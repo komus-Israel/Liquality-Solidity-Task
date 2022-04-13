@@ -107,7 +107,7 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
             describe("ether splitting", ()=>{
 
                 beforeEach(async()=>{
-                    await paymentContract.splitToken(ETHER_ADDRESS, recipients)
+                    await paymentContract.splitToken(ETHER_ADDRESS, recipients, ether(20))
                 })
 
                 describe("sucessful splitting", async()=>{
