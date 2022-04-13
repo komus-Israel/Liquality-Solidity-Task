@@ -40,6 +40,7 @@ contract Payment {
 
         address _recipient;
         uint256 _shareValue;
+        uint256 _streamDuration;
 
     }
 
@@ -47,6 +48,7 @@ contract Payment {
 
         uint256 _id;
         uint256 _duration;
+        uint256 _endTime;
         uint256 _totalAmount;
         uint256 _amountPerSeconds;
         address _recipient;
@@ -169,34 +171,61 @@ contract Payment {
     }
 
 
-    function splitWithStream (address _tokenAddress, TokenRecipient[] calldata _recipients, uint256 _amount) {
+    function splitWithStream (address _tokenAddress, TokenRecipient[] calldata _recipients, uint256 _amount) external {
 
-        /**
-                *struct Stream {
-
-                uint256 _id;
-                uint256 _duration;
-                uint256 _totalAmount;
-                uint256 _amountPerSeconds;
-                address _recipient;
-                address _tokenAddress;
-
-
-            }
-         */
         
         require(_tokenBalances[_contractAddress][_tokenAddress] >= _amount, "insufficient amount to split");
 
         for (uint256 index = 0; index < _recipients.length; index++) {
 
+            _streamId = _streamId + 1;  
             uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
+            uint256 _amountToWithDrawPerSeconds = _amountToSplitToAddress / _recipients[index]._streamDuration;
             _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
             _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
+
+            _streams[_streamId] = Stream (
+
+                                    _streamId, 
+                                    _recipients[index]._streamDuration, 
+                                    block.timestamp + _recipients[index]._streamDuration,  
+                                    _amountToSplitToAddress,
+                                    _amountToWithDrawPerSeconds, 
+                                    _recipients[index]._recipient,
+                                    _tokenAddress
+                                )
             emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
 
         }
 
     }
+
+
+    function withdrawFromStream(uint256 _streamID) external {
+
+        Stream memory _stream = _streams[_streamID];
+        uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
+        require(_stream._totalAmount >= _amountToWithDraw, "insufficient balance");
+
+        if(_stream.tokenAddress == _etherAddress) {
+
+            (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
+            require(sent, "Failed to release Ether");
+
+        }   else {
+
+            _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
+
+        }
+        
+        emit Withdrawal (_stream._recipient, _stream.tokenAddress, _amountToWithDraw);
+
+    }
+
+
+    
+
+
 
     
 

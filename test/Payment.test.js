@@ -7,7 +7,7 @@ const { ETHER_ADDRESS, tokens, ether } = require("./helper")
 const PaymentContract = artifacts.require("./Payment")
 const ERC20_USDT    = artifacts.require("./ERC20")
 const ReEntrancy = artifacts.require("./ReEntrancy")
-
+const  moment  = require("moment")
 
 
 
@@ -217,12 +217,12 @@ contract ("Payment Splitting Unit Test", ([splitter, recipient1, recipient2, rec
                     })
                 })
 
-            })
-
+           })
            
             
-        }) 
+       })
+   
 
-    })
+   })
    
 })
