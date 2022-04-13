@@ -220,7 +220,7 @@ contract Payment {
 
         }
         
-        emit Withdrawal (_stream._recipient, _stream.tokenAddress, _amountToWithDraw);
+        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
     }
 
