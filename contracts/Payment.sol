@@ -143,6 +143,11 @@ contract Payment {
     }
 
 
+    function getBalance(address _holder, address _tokenAddress) external view returns (uint256) {
+        return _tokenBalances[_tokenAddress][_holder];
+    }
+
+
     event Deposit (address indexed depositor, address indexed tokenAddress, uint256 amount);
     event Withdrawal (address indexed withdrawee, address indexed tokenAddress, uint256 amount);
     event Splitted  (address indexed to, address indexed tokenAddress, uint256 amount); 
