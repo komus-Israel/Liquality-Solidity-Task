@@ -1,4 +1,4 @@
-## A test driven smart contract to split Ether and ERC20 tokens to list of recipients and simulated Money stream
+## A test driven smart contract to split Ether and ERC20 tokens to list of recipients and to simulate money stream during withdrawal
 
 
 * I paid the gas fee using another recipient so as not to tamper with the withdrawal balance update after paying gas fee
@@ -9,4 +9,4 @@
 * My test values are from the PDF sent so it could be easy to see how well the code works
 
 
-![unit test](liquality smart contract unit test.png)
+![unit test](./liquality smart contract unit test.png)
