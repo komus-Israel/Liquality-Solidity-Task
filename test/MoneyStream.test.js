@@ -105,9 +105,9 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 recipients = [
 
-                    {_recipient: recipient1, _shareValue: 10, _streamDuration: 2592000},
-                    {_recipient: recipient2, _shareValue: 10, _streamDuration: 2592000},
-                    {_recipient: reEntrancyAddress, _shareValue: 10, _streamDuration: 2592000}
+                    {_recipient: recipient1, _shareValue: 30, _streamDuration: 2592000},
+                    {_recipient: recipient2, _shareValue: 70, _streamDuration: 2592000},
+                    //{_recipient: reEntrancyAddress, _shareValue: 10, _streamDuration: 2592000}
     
                 ]
                
@@ -117,7 +117,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 beforeEach(async()=>{
 
-                    await paymentContract.splitWithStream(ETHER_ADDRESS, recipients, ether(20))
+                    await paymentContract.splitWithStream(ETHER_ADDRESS, recipients, ether(1))
                 })
 
                 describe("sucessful splitting", async()=>{
@@ -126,7 +126,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                         const recipientBalanceInContract = await paymentContract.getBalance(recipient1, ETHER_ADDRESS)
                         recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated ether balance has been incremented from 0")
-                        recipientBalanceInContract.toString().should.be.equal((ether(20) * 0.1).toString(), "recipient got 10% as his first allocated ether")
+                        recipientBalanceInContract.toString().should.be.equal((ether(1) * 0.3).toString(), "recipient got 10% as his first allocated ether")
                    
                     })
 
@@ -140,8 +140,8 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                         for (let sec = 0; sec < 10; sec ++) {
                             
                             
-                            await paymentContract.withdrawFromStream(1, {from: recipient1})
-                            const balance = await web3.eth.getBalance(recipient1)
+                            await paymentContract.withdrawFromStream(1, {from: recipient1, gas: 5000000, gasPrice: 500000000})
+                            const balance = await web3.eth.getBalance(recipient2)
                             console.log(balance.toString())
                             await wait(1)           // create 5 sec delay for withdrawal
                             
@@ -149,9 +149,17 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                         }
 
 
-                        const streamBalance 
+                        const checkStream = await paymentContract.checkStream(1)
+                        const _streamBalance = checkStream._balance.toString()
+                        const _amountIssued = checkStream._amountIssued.toString()
+                        const recipient = checkStream._recipient
+                        const _balanceFromContract = await paymentContract.getBalance(recipient2, ETHER_ADDRESS)
 
-                        
+                        const reduced = Number(_streamBalance) < Number(_amountIssued)
+                        reduced.should.be.equal(true, "the balance reduced after every withdrawal")
+                        _balanceFromContract.toString().should.be.equal(_streamBalance, "the stream balance is equal to the total balance in contract")
+
+                    
                     })
 
                    

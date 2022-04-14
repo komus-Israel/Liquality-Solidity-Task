@@ -213,7 +213,6 @@ contract Payment {
             _amountToWithDraw = (block.timestamp - _stream._startTime) * _stream._amountPerSeconds;
         }
          
-        //require(_tokenBalances[_stream._recipient][_stream._tokenAddress] >= _amountToWithDraw, "insufficient balance");
         require(_stream._balance >= _amountToWithDraw, "insufficient balance");
         
         if(_stream._tokenAddress == _etherAddress) {
@@ -222,17 +221,19 @@ contract Payment {
             require(sent, "Failed to release Ether");
             _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
             _stream._balance = _stream._balance - _amountToWithDraw;
+            _streams[_streamID]._balance = _stream._balance;
 
         }  else {
 
             IERC20 _tokenToWithdrawFrom = IERC20(_stream._tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
             _stream._balance = _stream._balance - _amountToWithDraw;
+            _streams[_streamID]._balance = _stream._balance;
            _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
 
         }
 
-        _stream._startTime = block.timestamp;
+        _streams[_streamID]._startTime = block.timestamp;
         
         emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
