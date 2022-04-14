@@ -197,9 +197,20 @@ contract Payment {
     function withdrawFromStream(uint256 _streamID) external {
 
         Stream memory _stream = _streams[_streamID];
-        uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
-        require(_stream._totalAmount >= _amountToWithDraw, "insufficient balance");
 
+        uint256 _amountToWithDraw;
+
+        if(block.timestamp > _stream._endTime) {
+
+            _amountToWithDraw = _stream._totalAmount
+
+        } else {
+
+            uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
+        }
+         
+        require(_tokenBalances[_stream._recipient][_stream._tokenAddress] >= _amountToWithDraw, "insufficient balance");
+        
         if(_stream._tokenAddress == _etherAddress) {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
@@ -218,23 +229,6 @@ contract Payment {
 
 
     }
-
-    /*function test (uint256 amount) external view returns (uint256) {
-        uint256 time = 2592000;
-        uint256 deadline = block.timestamp + time;
-        uint256 _now = block.timestamp;
-        uint256 _amountPerSec = amount / time;
-        uint256 _withdraw = _amountPerSec; //(deadline - _now) * _amountPerSec;
-        return _withdraw;
-
-    }*/
-
-
-    
-
-
-
-    
 
 
     event Deposit (address indexed depositor, address indexed tokenAddress, uint256 amount);

@@ -134,21 +134,29 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 describe("streamed withdrawal", ()=>{
 
-                    let a
-                    beforeEach(async()=>{
-                        a = await paymentContract.withdrawFromStream(1, {from: recipient1})
-                    })
+                    /*beforeEach(async()=>{
+                        await paymentContract.withdrawFromStream(1, {from: recipient1}) 
+                    })*/
 
-                    describe("balance increment", ()=>{
+            
+                    it("withdraws ether in bits per seconds to the recipient's address", async()=>{
 
-                        it("returns balance", async()=>{
+                        for (let sec = 0; sec < 10; sec ++) {
+                            
+                            
+                            await paymentContract.withdrawFromStream(1, {from: recipient1})
                             const balance = await web3.eth.getBalance(recipient1)
                             console.log(balance.toString())
-                        
-                        })
+                            await wait(60)           // create 5 sec delay
+                            
+                            
+                        }
 
+                        /*const balance = await web3.eth.getBalance(recipient1)
+                        console.log(balance.toString())*/
                     })
 
+                   
                 })
                
             })
