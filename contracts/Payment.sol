@@ -204,9 +204,9 @@ contract Payment {
 
         uint256 _amountToWithDraw;
 
-        if(block.timestamp > _stream._endTime) {
+        if(block.timestamp > _stream._endTime && _stream._balance > 0) {
 
-            _amountToWithDraw = _stream._amountIssued;
+            _amountToWithDraw = _stream._balance;
 
         } else {
 
@@ -237,6 +237,13 @@ contract Payment {
         emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
 
+    }
+
+    function checkStream(uint256 _streamID) external view returns (uint256 _duration, uint256 _startTime, uint256 _endTime, uint256 _amountIssued, uint256 _balance, uint256 _amountPerSeconds, address _recipient, address _tokenAddress) {
+
+        Stream memory _stream = _streams[_streamID];
+        return (_stream._duration, _stream._startTime, _stream._endTime, _stream._amountIssued, _stream._balance, _stream._amountPerSeconds, _stream._recipient, _stream._tokenAddress);
+    
     }
 
 
