@@ -198,7 +198,7 @@ contract Payment {
     }
 
 
-    function withdrawFromStream(uint256 _streamID) external {
+    function withdrawFromStream(uint256 _streamID) external noReEntrancy {
 
         Stream memory _stream = _streams[_streamID];
 
