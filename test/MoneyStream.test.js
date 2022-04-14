@@ -152,7 +152,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                             
                             await paymentContract.withdrawFromStream(1, {from: recipient1, gas: 5000000, gasPrice: 500000000})
                             const balance = await web3.eth.getBalance(recipient2)
-                            console.log(balance.toString())
+                            console.log(balance.toString(), " =====> 270061728395 after every 1 second, 540123456790 after every 2 seconds")
                             await wait(1)           // create 1 sec delay for withdrawal
                             
                             
