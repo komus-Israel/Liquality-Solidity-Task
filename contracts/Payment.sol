@@ -113,57 +113,6 @@ contract Payment {
     }
 
 
-    /// @dev    function to split tokens to recipient addresses based on the percentage of shares allocated to them
-    /// @dev    The token isn't transferred to their wallets yet, but it is transferred to their token balance in the contract
-    /// @param  _tokenAddress is the address of the token (ERC20 or ETHER) that will be splitted to the recipients' balances
-    /// @param  _recipients is an array of Struct that contains the address and the share percentage of each recipients
-    /// @param  _amount is amount of tokens from which every recipients will be issued tokens.This is the amount to be splitted among the recipients
-
-    function splitToken(address _tokenAddress, TokenRecipient[] calldata _recipients, uint256 _amount) external {
-        
-        require(_tokenBalances[_contractAddress][_tokenAddress] >= _amount, "insufficient amount to split");
-
-        for (uint256 index = 0; index < _recipients.length; index++) {
-
-            uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
-            _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
-            _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
-            emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
-
-        }
-
-    }
-
-
-    /// @dev  Withdraw function to be called by recipients. Calling this function sends the token to their wallet address
-    /// @notice that re entrancy attack is blocked
-    /// @param _amount is that amount of tokens (ERC20 or ETHER) to be withdrawn by the recipient
-    /// @param _tokenAddress is the address of the token (ERC20 or ETHER) where the token will be withdrawn from
-
-    function withDraw(uint256 _amount, address _tokenAddress) external noReEntrancy {
-
-        require(_tokenBalances[msg.sender][_tokenAddress] >= _amount, "insufficient balance");
-
-        if (_tokenAddress == _etherAddress) {
-
-            (bool sent, ) = payable(msg.sender).call{value: _amount}("");
-            require(sent, "Failed to release Ether");
-            _tokenBalances[msg.sender][_tokenAddress] -= _amount;
-            emit Withdrawal(msg.sender, _tokenAddress, _amount);
-
-        } else {
-            IERC20 _tokenToWithdrawFrom = IERC20(_tokenAddress);
-            _tokenToWithdrawFrom.transfer(msg.sender, _amount);
-            _tokenBalances[msg.sender][_tokenAddress] -= _amount;
-            emit Withdrawal(msg.sender, _tokenAddress, _amount);
-        }
-
-
-       
-
-        
-    }
-
     /// @param  _holder is the address of the an holder whose balance is to be checked
     /// @param  _tokenAddress is token address of the token balance to be checked
     /// @return the token balance of the holder
@@ -172,6 +121,13 @@ contract Payment {
         return _tokenBalances[_holder][_tokenAddress];
     }
 
+
+    
+    /// @dev    function to split tokens to recipient addresses based on the percentage of shares allocated to them
+    /// @dev    The token isn't transferred to their wallets yet, but it is transferred to their token balance in the contract
+    /// @param  _tokenAddress is the address of the token (ERC20 or ETHER) that will be splitted to the recipients' balances
+    /// @param  _recipients is an array of Struct that contains the address and the share percentage of each recipients
+    /// @param  _amount is amount of tokens from which every recipients will be issued tokens.This is the amount to be splitted among the recipients
 
     function splitWithStream(address _tokenAddress, TokenRecipient[] memory _recipients, uint256 _amount) external {
 
@@ -197,6 +153,17 @@ contract Payment {
 
     }
 
+
+
+
+    /// @dev    Withdraw function to be called by recipients. Calling this function sends the token to their wallet address
+    /// @notice that re entrancy attack is blocked
+    /// @param  _streamID is the ID of the stream to be fetched and to make withdrawal from
+    /// @dev    The amount of tokens (ERC20 or ETHER) to be withdrawn is contained in the Stream Data
+    /// @dev    The address of the token (ERC20 or ETHER) to be withdrawn is contained in the Stream Data
+    /// @dev    The address of the recipient is contained in the Stream Data    
+    /// @notice The amount of balance is updated after every withdrawal
+    /// @notice The start time is updated after every withdrawal. The next withdrawal is calculated from the updated start time
 
     function withdrawFromStream(uint256 _streamID) external noReEntrancy {
 
