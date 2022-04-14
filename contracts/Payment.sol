@@ -202,7 +202,7 @@ contract Payment {
 
         _streams[_streamID]._startTime = block.timestamp;
         
-        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
+        emit StreamedWithdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
 
     }
@@ -216,7 +216,7 @@ contract Payment {
 
 
     event Deposit (address indexed depositor, address indexed tokenAddress, uint256 amount);
-    event Withdrawal (address indexed withdrawee, address indexed tokenAddress, uint256 amount);
+    event StreamedWithdrawal (address indexed withdrawee, address indexed tokenAddress, uint256 withdrawnAmount);
     event Splitted  (address indexed to, address indexed tokenAddress, uint256 amount); 
 
     
