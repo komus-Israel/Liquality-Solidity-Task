@@ -117,7 +117,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 beforeEach(async()=>{
 
-                    await paymentContract.splitToken(ETHER_ADDRESS, recipients, ether(20))
+                    await paymentContract.splitWithStream(ETHER_ADDRESS, recipients, ether(20))
                 })
 
                 describe("sucessful splitting", async()=>{
@@ -132,7 +132,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 })
 
-                /*describe("streamed withdrawal", ()=>{
+                describe("streamed withdrawal", ()=>{
 
                     let a
                     beforeEach(async()=>{
@@ -144,43 +144,19 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                         it("returns balance", async()=>{
                             const balance = await web3.eth.getBalance(recipient1)
                             console.log(balance.toString())
-                            console.log(a)
+                        
                         })
 
                     })
 
-                })*/
-                describe("data", ()=>{
-
-                    let b
-                    beforeEach(async()=>{
-                        b = await paymentContract.checkStream(1)
-                    })
-                    it("returns", ()=>{
-                      console.log(b)
-                    })
-
-                    it("retuns", async()=>{
-                        const c = await paymentContract._streamId();
-                        console.log(c.toString())
-                    })
                 })
+               
             })
        })
 
     })
 
-                /*describe("sfvsf", ()=>{
-                    it("dvdv", async()=>{
-                        const a = await paymentContract.test(ether(0.7))
-                        console.log(a.toString())
-
-                        b = await paymentContract.withdrawFromStream(1, {from: recipient1})
-
-                    })
-
-
-                })*/
+              
    
 
 })

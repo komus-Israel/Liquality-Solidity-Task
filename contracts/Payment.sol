@@ -171,14 +171,14 @@ contract Payment {
     }
 
 
-    function splitWithStream (address _tokenAddress, TokenRecipient[] calldata _recipients, uint256 _amount) external {
+    function splitWithStream(address _tokenAddress, TokenRecipient[] memory _recipients, uint256 _amount) external {
 
         
         require(_tokenBalances[_contractAddress][_tokenAddress] >= _amount, "insufficient amount to split");
 
         for (uint256 index = 0; index < _recipients.length; index++) {
 
-            _streamId = index;  
+            _streamId += 1;  
             uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
             uint256 _amountToWithDrawPerSeconds = _amountToSplitToAddress / _recipients[index]._streamDuration;
             uint256 _deadline = block.timestamp + _recipients[index]._streamDuration;
@@ -194,13 +194,13 @@ contract Payment {
     }
 
 
-    function withdrawFromStream(uint256 _streamID) external view returns (uint256) {
+    function withdrawFromStream(uint256 _streamID) external {
 
         Stream memory _stream = _streams[_streamID];
         uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
         require(_stream._totalAmount >= _amountToWithDraw, "insufficient balance");
 
-        /*if(_stream._tokenAddress == _etherAddress) {
+        if(_stream._tokenAddress == _etherAddress) {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
             require(sent, "Failed to release Ether");
@@ -214,13 +214,12 @@ contract Payment {
 
         }
         
-        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);*/
+        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
-        return _amountToWithDraw;
 
     }
 
-    function test (uint256 amount) external view returns (uint256) {
+    /*function test (uint256 amount) external view returns (uint256) {
         uint256 time = 2592000;
         uint256 deadline = block.timestamp + time;
         uint256 _now = block.timestamp;
@@ -228,11 +227,7 @@ contract Payment {
         uint256 _withdraw = _amountPerSec; //(deadline - _now) * _amountPerSec;
         return _withdraw;
 
-    }
-
-    function checkStream(uint256 id) external view returns (Stream memory){
-        return _streams[id];
-    }
+    }*/
 
 
     
