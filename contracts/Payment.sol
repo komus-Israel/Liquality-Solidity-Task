@@ -24,7 +24,7 @@ contract Payment {
     /// @dev mapping the store the ether and erc20 token balances      
 
     mapping(address => mapping(address => uint256)) private _tokenBalances;
-    mapping(uint256 => Stream) private _streams;
+    mapping(uint256 => Stream) internal _streams;
 
 
 
@@ -32,7 +32,7 @@ contract Payment {
     address private _contractAddress;                   //  declare the address of the contract
     address private _etherAddress;                      //  declare the address of ether
     bool private _locked;                               //  declare the variable to be used in reentrancy modifier
-    uint256 private _streamId;                          //  ID to keep track of every allocated stream
+    uint256 public _streamId;                          //  ID to keep track of every allocated stream
 
     /// @dev TokenRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
 
@@ -178,22 +178,14 @@ contract Payment {
 
         for (uint256 index = 0; index < _recipients.length; index++) {
 
-            _streamId = _streamId + 1;  
+            _streamId = index;  
             uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
             uint256 _amountToWithDrawPerSeconds = _amountToSplitToAddress / _recipients[index]._streamDuration;
+            uint256 _deadline = block.timestamp + _recipients[index]._streamDuration;
             _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
             _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
 
-            _streams[_streamId] = Stream (
-
-                                    _streamId, 
-                                    _recipients[index]._streamDuration, 
-                                    block.timestamp + _recipients[index]._streamDuration,  
-                                    _amountToSplitToAddress,
-                                    _amountToWithDrawPerSeconds, 
-                                    _recipients[index]._recipient,
-                                    _tokenAddress
-                                );
+            _streams[index] = Stream(_streamId, _recipients[index]._streamDuration, _deadline, _amountToSplitToAddress, _amountToWithDrawPerSeconds, _recipients[index]._recipient, _tokenAddress);
 
             emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
 
@@ -202,13 +194,13 @@ contract Payment {
     }
 
 
-    function withdrawFromStream(uint256 _streamID) external {
+    function withdrawFromStream(uint256 _streamID) external view returns (uint256) {
 
         Stream memory _stream = _streams[_streamID];
         uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
         require(_stream._totalAmount >= _amountToWithDraw, "insufficient balance");
 
-        if(_stream._tokenAddress == _etherAddress) {
+        /*if(_stream._tokenAddress == _etherAddress) {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
             require(sent, "Failed to release Ether");
@@ -219,11 +211,27 @@ contract Payment {
             IERC20 _tokenToWithdrawFrom = IERC20(_stream._tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
             _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
-            
+
         }
         
-        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
+        emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);*/
 
+        return _amountToWithDraw;
+
+    }
+
+    function test (uint256 amount) external view returns (uint256) {
+        uint256 time = 2592000;
+        uint256 deadline = block.timestamp + time;
+        uint256 _now = block.timestamp;
+        uint256 _amountPerSec = amount / time;
+        uint256 _withdraw = _amountPerSec; //(deadline - _now) * _amountPerSec;
+        return _withdraw;
+
+    }
+
+    function checkStream(uint256 id) external view returns (Stream memory){
+        return _streams[id];
     }
 
 
