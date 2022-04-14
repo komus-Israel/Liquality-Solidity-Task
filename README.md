@@ -9,4 +9,4 @@
 * My test values are from the PDF sent so it could be easy to see how well the code works
 
 
-![unit test](liquality_smart_contract_unit_test.png)
+![unit test](./liquality_smart_contract_unit_test.png)

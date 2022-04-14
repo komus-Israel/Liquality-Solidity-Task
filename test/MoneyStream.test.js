@@ -175,6 +175,64 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                 })
                
             })
+
+            describe("erc20 splitting", ()=>{
+
+                let splitErc20
+
+                beforeEach(async()=>{
+
+                    splitErc20 = await paymentContract.splitWithStream(usdt.address, recipients, tokens(1))
+
+                })
+
+
+                describe("event", ()=>{
+
+                    it("emits the Splitted event", async()=>{
+                        splitErc20.logs[0].event.should.be.equal("Splitted", "it emits the Splitted event")
+                    })
+
+                })
+
+                describe("streamed withdrawal", ()=>{
+                    
+                    it("withdraws the erc20 token", async()=>{
+                        for (let sec = 0; sec < 10; sec ++) {
+                            
+
+                            /**
+                             * The true recipient of this transaction is recipient2
+                             * But I had to pay the gas fee using recipient1 so as not to tamper with the withdrawal balance update after paying gas fee
+                             * This makes it easier to test that the withdrawal amount is in the correct proportion
+                             * I simulated the transfer by causing `1 second` delay however it took `2 seconds` to complete withdrawal
+                             * This means that I made withdrawal every `1 second` but it took `2 seconds` for the transaction to be processed
+                             * The withdraw log is in the README.md
+                             * My test values are from the PDF sent so it could be easy to see how well the code works
+                             */
+                            
+                            await paymentContract.withdrawFromStream(1, {from: recipient1, gas: 5000000, gasPrice: 500000000})
+                            const balance = await usdt.balanceOf(recipient2)
+                            console.log(balance.toString(), " =====> 270061728395 after every 1 second, 540123456790 after every 2 seconds")
+                            await wait(1)           // create 1 sec delay for withdrawal
+                            
+                            
+                        }
+    
+    
+                        const checkStream = await paymentContract.checkStream(1)
+                        const _streamBalance = checkStream._balance.toString()
+                        const _amountIssued = checkStream._amountIssued.toString()
+                        const _balanceFromContract = await paymentContract.getBalance(recipient2, usdt.address)
+    
+                        const reduced = Number(_streamBalance) < Number(_amountIssued)
+                        reduced.should.be.equal(true, "the balance reduced after every withdrawal")
+                        _balanceFromContract.toString().should.be.equal(_streamBalance, "the stream balance is equal to the total balance in contract")
+                    })
+                    
+
+                })
+            })
        })
 
     })
