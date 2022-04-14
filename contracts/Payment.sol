@@ -48,8 +48,10 @@ contract Payment {
 
         uint256 _id;
         uint256 _duration;
+        uint256 _startTime;
         uint256 _endTime;
-        uint256 _totalAmount;
+        uint256 _amountIssued;
+        uint256 _balance;
         uint256 _amountPerSeconds;
         address _recipient;
         address _tokenAddress;
@@ -181,11 +183,13 @@ contract Payment {
             _streamId += 1;  
             uint256 _amountToSplitToAddress = (_amount / 100 ) * _recipients[index]._shareValue;
             uint256 _amountToWithDrawPerSeconds = _amountToSplitToAddress / _recipients[index]._streamDuration;
+            uint256 _startTime = block.timestamp;
             uint256 _deadline = block.timestamp + _recipients[index]._streamDuration;
+            
             _tokenBalances[_recipients[index]._recipient][_tokenAddress] += _amountToSplitToAddress;
             _tokenBalances[_contractAddress][_tokenAddress] -= _amountToSplitToAddress;
 
-            _streams[index] = Stream(_streamId, _recipients[index]._streamDuration, _deadline, _amountToSplitToAddress, _amountToWithDrawPerSeconds, _recipients[index]._recipient, _tokenAddress);
+            _streams[index] = Stream(_streamId, _recipients[index]._streamDuration, _startTime, _deadline, _amountToSplitToAddress, _amountToSplitToAddress, _amountToWithDrawPerSeconds, _recipients[index]._recipient, _tokenAddress);
 
             emit Splitted(_recipients[index]._recipient, _tokenAddress, _amountToSplitToAddress);
 
@@ -202,28 +206,33 @@ contract Payment {
 
         if(block.timestamp > _stream._endTime) {
 
-            _amountToWithDraw = _stream._totalAmount
+            _amountToWithDraw = _stream._amountIssued;
 
         } else {
 
-            uint256 _amountToWithDraw = (_stream._endTime - block.timestamp) * _stream._amountPerSeconds;
+            _amountToWithDraw = (block.timestamp - _stream._startTime) * _stream._amountPerSeconds;
         }
          
-        require(_tokenBalances[_stream._recipient][_stream._tokenAddress] >= _amountToWithDraw, "insufficient balance");
+        //require(_tokenBalances[_stream._recipient][_stream._tokenAddress] >= _amountToWithDraw, "insufficient balance");
+        require(_stream._balance >= _amountToWithDraw, "insufficient balance");
         
         if(_stream._tokenAddress == _etherAddress) {
 
             (bool sent, ) = payable(_stream._recipient).call{value: _amountToWithDraw}("");
             require(sent, "Failed to release Ether");
             _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
+            _stream._balance = _stream._balance - _amountToWithDraw;
 
-        }   else {
+        }  else {
 
             IERC20 _tokenToWithdrawFrom = IERC20(_stream._tokenAddress);
             _tokenToWithdrawFrom.transfer(_stream._recipient, _amountToWithDraw);
-            _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
+            _stream._balance = _stream._balance - _amountToWithDraw;
+           _tokenBalances[_stream._recipient][_stream._tokenAddress] -=  _amountToWithDraw;
 
         }
+
+        _stream._startTime = block.timestamp;
         
         emit Withdrawal (_stream._recipient, _stream._tokenAddress, _amountToWithDraw);
 
