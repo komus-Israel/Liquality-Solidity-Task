@@ -10,4 +10,12 @@
 * My test values are from the PDF sent so it could be easy to see how well the code works
 
 
-![unit test](liquality_smart_%20contract_unit_test.png)
+### Unit test displaying the streamed ether withdrawal
+
+![ether withdrawal](streamed_ether_withdrawal.png)
+
+
+
+### Unit test displaying the streamed erc20 withdrawal
+
+![erc20 withdrawal](streamed_erc20_withdrawal.png)

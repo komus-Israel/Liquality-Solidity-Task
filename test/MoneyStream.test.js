@@ -132,7 +132,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 })
 
-                describe("streamed withdrawal", ()=>{
+                describe("streamed ether withdrawal", ()=>{
 
             
                     it("withdraws ether in bits per seconds to the recipient's address", async()=>{
@@ -195,7 +195,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 })
 
-                describe("streamed withdrawal", ()=>{
+                describe("streamed erc20 withdrawal", ()=>{
                     
                     it("withdraws the erc20 token", async()=>{
                         for (let sec = 0; sec < 10; sec ++) {
