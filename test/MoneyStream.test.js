@@ -105,7 +105,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                 recipients = [
 
-                    {_recipient: recipient1, _shareValue: 30, _streamDuration: 2592000},
+                    {_recipient: reEntrancyAddress, _shareValue: 30, _streamDuration: 2592000},
                     {_recipient: recipient2, _shareValue: 70, _streamDuration: 2592000},
                     //{_recipient: reEntrancyAddress, _shareValue: 10, _streamDuration: 2592000}
     
@@ -124,7 +124,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
 
                     it("increments the recipient's allocated balance from 0", async()=>{
 
-                        const recipientBalanceInContract = await paymentContract.getBalance(recipient1, ETHER_ADDRESS)
+                        const recipientBalanceInContract = await paymentContract.getBalance(reEntrancyAddress, ETHER_ADDRESS)
                         recipientBalanceInContract.toString().should.not.be.equal("0", "recipient's allocated ether balance has been incremented from 0")
                         recipientBalanceInContract.toString().should.be.equal((ether(1) * 0.3).toString(), "recipient got 10% as his first allocated ether")
                    

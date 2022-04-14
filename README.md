@@ -9,3 +9,4 @@
 * My test values are from the PDF sent so it could be easy to see how well the code works
 
 
+![unit test](liquality smart contract unit test.png)
