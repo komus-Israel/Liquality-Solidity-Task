@@ -7,6 +7,7 @@
 * I simulated the money stream by causing `1 second` delay before every withdrawal in the test script however it took `2 seconds` to complete withdrawal
 * This means that I made withdrawal every `1 second` but it took `2 seconds` for the transaction to be processed, hence withdrawing at `2 seconds` interval
 * The withdraw log is present below the README.md. Each withdrawal is at `2 seconds` interval
+* Defence against reEntrancy attack weas implemented for ether withdrawal. Test for this was successsful
 * My test values are from the PDF sent so it could be easy to see how well the code works
 
 
