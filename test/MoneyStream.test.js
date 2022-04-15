@@ -7,11 +7,11 @@ const { ETHER_ADDRESS, tokens, ether, wait } = require("./helper")
 const PaymentContract = artifacts.require("./Payment")
 const ERC20_USDT    = artifacts.require("./ERC20")
 const ReEntrancy = artifacts.require("./ReEntrancy")
-const  moment  = require("moment")
 
 
 
-contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitter, recipient1, recipient2, recipient3, recipient4])=>{
+
+contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitter, recipient1, recipient2])=>{
 
     let paymentContract;
     let usdt;
@@ -195,7 +195,7 @@ contract ("Payment Splitting and Simulated Money Streaming Unit Test", ([splitte
                 })
 
 
-                describe("event", ()=>{
+                describe("emitted event", ()=>{
 
                     it("emits the Splitted event", async()=>{
                         splitErc20.logs[0].event.should.be.equal("Splitted", "it emits the Splitted event")
