@@ -1,4 +1,4 @@
-## A test driven smart contract to split Ether and ERC20 tokens to list of recipients and to simulate money stream during withdrawal
+## A test driven smart contract to split Ether and ERC20 tokens to a list of recipients and to simulate money stream during withdrawal
 
 
 * I paid the gas fee using another recipient so as not to tamper with the withdrawal balance update after paying gas fee
