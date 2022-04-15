@@ -37,7 +37,7 @@ contract Payment {
     bool private _locked;                               //  declare the variable to be used in reentrancy modifier
     uint256 public _streamId;                          //  ID to keep track of every allocated stream
 
-    /// @dev TokenRecipient Struct is used to track the recipients and the allocation of shares of the recipients
+    /// @dev TokenRecipient Struct is used to track the recipients and the percentage of shares allocated to the recipients
 
     struct TokenRecipient {
 
@@ -46,6 +46,9 @@ contract Payment {
         uint256 _streamDuration;
 
     }
+
+
+    /// @dev The Stream Struct stores the data of the every stream created
 
     struct Stream {
 
@@ -127,7 +130,7 @@ contract Payment {
 
     
     /// @dev    function to split tokens to recipient addresses based on the percentage of shares allocated to them
-    /// @dev    The token isn't transferred to their wallets yet, but it is transferred to their token balance in the contract
+    /// @dev    The token isn't transferred to their wallets directly, but it is transferred to their token balance in the contract
     /// @param  _tokenAddress is the address of the token (ERC20 or ETHER) that will be splitted to the recipients' balances
     /// @param  _recipients is an array of Struct that contains the address and the share percentage of each recipients
     /// @param  _amount is amount of tokens from which every recipients will be issued tokens.This is the amount to be splitted among the recipients
@@ -159,8 +162,8 @@ contract Payment {
 
 
 
-    /// @dev    Withdraw function to be called by recipients. Calling this function sends the token to their wallet address
-    /// @notice that re entrancy attack is blocked
+    /// @dev    Withdraw function to be called by recipients. Calling this function sends the tokens directly to their wallet address
+    /// @notice re entrancy attack is blocked
     /// @param  _streamID is the ID of the stream to be fetched and to make withdrawal from
     /// @dev    The amount of tokens (ERC20 or ETHER) to be withdrawn is contained in the Stream Data
     /// @dev    The address of the token (ERC20 or ETHER) to be withdrawn is contained in the Stream Data
