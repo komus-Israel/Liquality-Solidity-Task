@@ -5,8 +5,8 @@ pragma solidity 0.8.10;
 /// @title  Token Split Contract
 
 /*  
-    *       @dev    This is a  smart contract that split ETHER and ERC 20 tokens to
-    *       addresses based on their shares allocation
+    *   @dev    This is a  smart contract that split ETHER and ERC 20 tokens to
+    *           addresses based on their shares allocation
 */     
 
 
@@ -21,9 +21,12 @@ contract Payment {
     }
 
       
-    /// @dev mapping the store the ether and erc20 token balances      
+    /// @dev map addresses to their ether and erc20 token balances      
 
     mapping(address => mapping(address => uint256)) private _tokenBalances;
+
+    /// @dev   map ids to Stream struct
+
     mapping(uint256 => Stream) internal _streams;
 
 
@@ -34,7 +37,7 @@ contract Payment {
     bool private _locked;                               //  declare the variable to be used in reentrancy modifier
     uint256 public _streamId;                          //  ID to keep track of every allocated stream
 
-    /// @dev TokenRecipeint struct is used to track the recipient and the allocation of shares of the recipient during split
+    /// @dev TokenRecipient Struct is used to track the recipients and the allocation of shares of the recipients
 
     struct TokenRecipient {
 
@@ -69,8 +72,8 @@ contract Payment {
 
 
     /// @notice locked = true
-    /// @dev    when an attacker calls the withdraw or refund function, the function is set to locked. It will only be unlocked when the function runs to the end
-    /// @dev    locked = false after the withdraw or refund function finishes executing
+    /// @dev    when an attacker calls the withdraw  function, the function is set to locked. It will only be unlocked when the function runs to the end
+    /// @dev    locked = false after the withdraw function finishes executing
 
     modifier noReEntrancy() {
 
@@ -206,6 +209,10 @@ contract Payment {
 
 
     }
+
+
+    /// @dev    function to fetch the Stream data assigned to a stream id
+    /// @param  _streamID is the ID of the Stream to be fetched
 
     function checkStream(uint256 _streamID) external view returns (uint256 _duration, uint256 _startTime, uint256 _endTime, uint256 _amountIssued, uint256 _balance, uint256 _amountPerSeconds, address _recipient, address _tokenAddress) {
 
