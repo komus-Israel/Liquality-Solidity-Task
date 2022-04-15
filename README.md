@@ -8,7 +8,7 @@
 * This means that I made withdrawal every `1 second` but it took `2 seconds` for the transaction to be processed, hence withdrawing at `2 seconds` interval
 * The withdraw log is present below the README.md. Each withdrawal is at `2 seconds` interval
 * Defence against reEntrancy attack was implemented for ether withdrawal. Test for this was successsful
-* My test values are from the PDF sent so it could be easy to see how well the code works
+* My test values are from the PDF sent so it could be easy to see how well the code works with the test values
 
 
 ### Unit test displaying the streamed ether withdrawal
