@@ -13,10 +13,10 @@
 
 ### Unit test displaying the streamed ether withdrawal
 
-![ether withdrawal](streamed_ether_withdrawal.png)
+![ether withdrawal](./unit_images/streamed_ether_withdrawal.png)
 
 
 
 ### Unit test displaying the streamed erc20 withdrawal
 
-![erc20 withdrawal](streamed_erc20_withdrawal.png)
+![erc20 withdrawal](./unit_images/streamed_erc20_withdrawal.png)
